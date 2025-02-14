@@ -1,89 +1,78 @@
 package lv.rvt;
-public class Box {
-    private  double width;
-    private  double height;
-    private  double length;
+
+import java.util.ArrayList;
+
+public class Box implements Packable {
+    private double capacity;
+    private ArrayList<Packable> items;
+
+    public Box(double capacity) {
+        this.capacity = capacity;
+        this.items = new ArrayList<>();
+    }
+
+    public void add(Packable item) {
+        if (this.weight() + item.weight() <= capacity) {
+            items.add(item);
+        }
+    }
+
+    @Override
+    public double weight() {
+        double totalWeight = 0;
+        for (Packable item : items) {
+            totalWeight += item.weight();
+        }
+        return totalWeight;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Box: " + items.size() + " items, total weight " + String.format("%.1f", weight()) + " kg";
+    }
 
     public static void main(String[] args) {
-        Box box = new Box(2.5, 5.0, 6.0);
+        Book book1 = new Book("Fyodor Dostoevsky", "Crime and Punishment", 2);
+        Book book2 = new Book("Robert Martin", "Clean Code", 1);
+        Book book3 = new Book("Kent Beck", "Test Driven Development", 0.5);
 
-        System.out.println("Area: " + box.area() + " volume: " + box.volume());
+        CD cd1 = new CD("Pink Floyd", "Dark Side of the Moon", 1973);
+        CD cd2 = new CD("Wigwam", "Nuclear Nightclub", 1975);
+        CD cd3 = new CD("Rendezvous Park", "Closer to Being Here", 2012);
 
-        Box biggerBox = box.biggerBox(box);
-        System.out.println("Bigger Box Area: " + biggerBox.area() + " volume: " + biggerBox.volume());
+        System.out.println(book1);
+        System.out.println(book2);
+        System.out.println(book3);
+        System.out.println(cd1);
+        System.out.println(cd2);
+        System.out.println(cd3);
 
-        Box smallerBox = box.smallerBox(box);
-        System.out.println("Smaller Box Area: " + smallerBox.area() + " volume: " + smallerBox.volume());
+        Box box = new Box(10);
 
-        Box nestedBox = new Box(2.0, 4.0, 5.0);
-        System.out.println("Can nestedBox fit inside box? " + nestedBox.nests(box));
-    }
+        box.add(book1);
+        box.add(book2);
+        box.add(book3);
 
+        box.add(cd1);
+        box.add(cd2);
+        box.add(cd3);
 
-
-    public Box(double width, double height, double length) {
-        this.width = width;
-        this.height = height;
-        this.length = length;
-    }
-
-    public Box(double side) {
-        this.width = side;
-        this.height = side;
-        this.length = side;
-    }
-
-    public Box(Box oldBox) {
-        this.width = oldBox.width;
-        this.height = oldBox.height;
-        this.length = oldBox.length;
-    }
-
-    public double volume() {
-        return width * height * length;
-    }
-
-    public double area() {
-        return 2 * faceArea() + 2 * topArea() + 2 * sideArea();
-    }
-
-    private double faceArea() {
-        return width * height;
-    }
-
-    private double topArea() {
-        return width * length;
-    }
-
-    private double sideArea() {
-        return height * length;
-    }
+        System.out.println(box);
 
 
-    public double length() {
-        return length;
-    }
 
-    public double height() {
-        return height;
-    }
+        Box smallerBox = new Box(5);
+        smallerBox.add(book1);
+        smallerBox.add(cd1);
 
-    public double width() {
-        return width;
-    }
 
-    public Box biggerBox(Box oldBox) {
-        return new Box(1.25 * oldBox.width(), 1.25 * oldBox.height(), 1.25 * oldBox.length());
-    }
+        Box biggerBox = new Box(10);
+        biggerBox.add(smallerBox);
+        biggerBox.add(book2);
 
-    public Box smallerBox(Box oldBox) {
-        return new Box(0.75 * oldBox.width(), 0.75 * oldBox.height(), 0.75 * oldBox.length());
-    }
+        System.out.println(biggerBox);
 
-    public boolean nests(Box outsideBox) {
-        return this.width < outsideBox.width &&
-               this.height < outsideBox.height &&
-               this.length < outsideBox.length;
+
     }
 }
-
